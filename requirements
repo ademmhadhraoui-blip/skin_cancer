@@ -1,0 +1,8 @@
+flask
+tensorflow
+numpy
+mysql-connector-python
+pillow
+scikit-learn
+matplotlib
+seaborn
