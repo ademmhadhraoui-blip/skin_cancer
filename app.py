@@ -6,6 +6,8 @@ import numpy as np
 from werkzeug.utils import secure_filename
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
+import gdown
+
 
 
 app = Flask(__name__)
@@ -20,15 +22,37 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # ── Connexion DB (fonction pour éviter les déconnexions) ──────────────────────
 def get_db():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="skin_care_db"
+        host=os.environ.get("MYSQLHOST", "localhost"),
+        user=os.environ.get("MYSQLUSER", "root"),
+        password=os.environ.get("MYSQLPASSWORD", ""),
+        database=os.environ.get("MYSQLDATABASE", "skin_care_db"),
+        port=int(os.environ.get("MYSQLPORT", 3306))
     )
 
-
 # ── Chargement du modèle (une seule fois au démarrage) ────────────────────────
-model = load_model("model/best_vgg16_skin.keras")
+
+MODEL_DIR = "model"
+MODEL_PATH = os.path.join(MODEL_DIR, "best_vgg16_skin.keras")
+
+def download_model():
+    os.makedirs(MODEL_DIR, exist_ok=True)
+
+    if not os.path.exists(MODEL_PATH):
+        model_url = os.environ.get("MODEL_URL")
+
+        if not model_url:
+            raise Exception("MODEL_URL environment variable is missing")
+
+        print("Downloading model from Google Drive...")
+        gdown.download(model_url, MODEL_PATH, quiet=False, fuzzy=True)
+
+        if not os.path.exists(MODEL_PATH):
+            raise Exception("Model download failed")
+
+        print("Model downloaded successfully.")
+
+download_model()
+model = load_model(MODEL_PATH)
 
 class_names = [
     "actinic keratosis",
