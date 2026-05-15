@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DermaScan — Résultat</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      font-family: 'Outfit', sans-serif;
+      background: #1a0d06;
+      color: #f0dcc4;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    .root {
+      width: 100%;
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .layers-bg {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 0;
+    }
+
+    .layer {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .layer-1 { background: #e8c9a0; }
+    .layer-2 { background: #d4956a; }
+    .layer-3 { background: #b56b3e; }
+    .layer-4 { background: #8b4520; }
+    .layer-5 { background: #5c2d10; }
+    .layer-6 { background: #3a1a08; }
+
+    .layer::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 60px,
+        rgba(0,0,0,0.04) 60px,
+        rgba(0,0,0,0.04) 61px
+      );
+    }
+
+    .layer-label {
+      position: absolute;
+      left: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .layer-1 .layer-label { color: #8b4520; }
+    .layer-2 .layer-label { color: #5c2d10; }
+    .layer-3 .layer-label { color: #3a1a08; }
+    .layer-4 .layer-label { color: #e8c9a0; }
+    .layer-5 .layer-label { color: #d4956a; }
+    .layer-6 .layer-label { color: #b56b3e; }
+
+    .layer-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: rgba(0,0,0,0.15);
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(
+        105deg,
+        rgba(13,10,8,0.93) 0%,
+        rgba(13,10,8,0.78) 48%,
+        rgba(13,10,8,0.45) 100%
+      );
+      z-index: 1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 5;
+      min-height: 100vh;
+      padding: 5vh 6vw;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 7vh;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1.5px solid #d4956a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-name {
+      font-size: 13px;
+      font-weight: 300;
+      color: #d4956a;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: rgba(240,220,196,0.65);
+      font-size: 13px;
+      font-weight: 300;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: 0.2s;
+    }
+
+    .nav-link:hover {
+      color: #d4956a;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .hero-sup {
+      font-size: 11px;
+      font-weight: 300;
+      color: #b56b3e;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(42px, 7vw, 86px);
+      font-weight: 700;
+      color: #f0dcc4;
+      line-height: 1.04;
+      margin-bottom: 24px;
+    }
+
+    .title em {
+      font-style: italic;
+      color: #d4956a;
+    }
+
+    .subtitle {
+      max-width: 560px;
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.9;
+      color: rgba(208,181,152,0.65);
+      margin-bottom: 34px;
+    }
+
+    .result-card {
+      max-width: 560px;
+      background: rgba(240,220,196,0.06);
+      border: 0.5px solid rgba(212,149,106,0.22);
+      border-radius: 24px;
+      padding: 32px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.22);
+    }
+
+    .result-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px 0;
+      border-bottom: 0.5px solid rgba(212,149,106,0.18);
+    }
+
+    .result-row:last-child {
+      border-bottom: none;
+    }
+
+    .result-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgba(208,181,152,0.55);
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .result-label i {
+      color: #d4956a;
+      font-size: 22px;
+    }
+
+    .result-value {
+      font-size: 18px;
+      color: #f0dcc4;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    .confidence {
+      color: #d4956a;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .image-card {
+      width: 100%;
+      max-width: 420px;
+      justify-self: end;
+      background: rgba(240,220,196,0.06);
+      border: 0.5px solid rgba(212,149,106,0.22);
+      border-radius: 24px;
+      padding: 22px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.22);
+    }
+
+    .image-card img {
+      width: 100%;
+      height: 330px;
+      object-fit: cover;
+      border-radius: 18px;
+      border: 1px solid rgba(212,149,106,0.25);
+      background: rgba(240,220,196,0.05);
+      margin-bottom: 18px;
+    }
+
+    .image-caption {
+      font-size: 13px;
+      color: rgba(208,181,152,0.45);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+
+    .btn {
+      text-decoration: none;
+      height: 50px;
+      padding: 0 22px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      transition: 0.18s ease;
+    }
+
+    .btn-primary {
+      background: #d4956a;
+      color: #1a0d06;
+    }
+
+    .btn-primary:hover {
+      background: #e8a87a;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(240,220,196,0.05);
+      border: 0.5px solid rgba(212,149,106,0.28);
+      color: #f0dcc4;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(240,220,196,0.09);
+      border-color: rgba(212,149,106,0.55);
+      transform: translateY(-2px);
+    }
+
+    .medical-note {
+      margin-top: 22px;
+      max-width: 560px;
+      font-size: 12px;
+      line-height: 1.7;
+      color: rgba(208,181,152,0.42);
+    }
+
+    .medical-note i {
+      color: #d4956a;
+      margin-right: 6px;
+    }
+
+    @media (max-width: 900px) {
+      .content {
+        padding: 40px 28px;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+        gap: 42px;
+      }
+
+      .image-card {
+        justify-self: start;
+        max-width: 100%;
+      }
+
+      .image-card img {
+        height: 280px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .topbar {
+        align-items: flex-start;
+        gap: 20px;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        flex-wrap: wrap;
+      }
+
+      .title {
+        font-size: 42px;
+      }
+
+      .result-card {
+        padding: 24px;
+      }
+
+      .result-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .result-value {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="root">
+
+  <div class="layers-bg">
+    <div class="layer layer-1">
+      <span class="layer-label">Stratum corneum</span>
+      <div class="layer-line"></div>
+    </div>
+
+    <div class="layer layer-2">
+      <span class="layer-label">Épiderme</span>
+      <div class="layer-line"></div>
+    </div>
+
+    <div class="layer layer-3">
+      <span class="layer-label">Couche basale</span>
+      <div class="layer-line"></div>
+    </div>
+
+    <div class="layer layer-4">
+      <span class="layer-label">Derme</span>
+      <div class="layer-line"></div>
+    </div>
+
+    <div class="layer layer-5">
+      <span class="layer-label">Hypoderme</span>
+      <div class="layer-line"></div>
+    </div>
+
+    <div class="layer layer-6">
+      <span class="layer-label">Tissu sous-cutané</span>
+    </div>
+  </div>
+
+  <div class="overlay"></div>
+
+  <main class="content">
+
+    <nav class="topbar">
+      <div class="brand">
+        <div class="brand-mark">
+          <i class="ti ti-scan" style="color:#d4956a; font-size:18px;"></i>
+        </div>
+        <span class="brand-name">DermaScan</span>
+      </div>
+
+      <div class="top-actions">
+        <a class="nav-link" href="{{ url_for('dashboard') }}">
+          <i class="ti ti-layout-dashboard"></i>
+          Dashboard
+        </a>
+
+        <a class="nav-link" href="{{ url_for('predict') }}">
+          <i class="ti ti-microscope"></i>
+          Nouvelle analyse
+        </a>
+
+        <a class="nav-link" href="{{ url_for('patients') }}">
+          <i class="ti ti-users"></i>
+          Patients
+        </a>
+      </div>
+    </nav>
+
+    <section class="layout">
+
+      <div>
+        <p class="hero-sup">Résultat de diagnostic</p>
+
+        <h1 class="title">
+          Sous la<br>
+          <em>surface</em>,<br>
+          le résultat.
+        </h1>
+
+        <p class="subtitle">
+          Voici le résultat généré par votre modèle VGG16 à partir de l'image téléversée.
+          Ce résultat doit être utilisé uniquement dans un contexte éducatif ou expérimental.
+        </p>
+
+        <div class="result-card">
+          <div class="result-row">
+            <div class="result-label">
+              <i class="ti ti-report-medical"></i>
+              Diagnostic
+            </div>
+            <div class="result-value">{{ result }}</div>
+          </div>
+
+          <div class="result-row">
+            <div class="result-label">
+              <i class="ti ti-percentage"></i>
+              Confiance
+            </div>
+            <div class="result-value confidence">{{ prob }}%</div>
+          </div>
+        </div>
+
+        <p class="medical-note">
+          <i class="ti ti-shield-check"></i>
+          Ce système est destiné à un usage éducatif et de recherche. Il ne remplace pas un diagnostic médical professionnel.
+        </p>
+
+        <div class="actions">
+          <a class="btn btn-primary" href="{{ url_for('predict') }}">
+            <i class="ti ti-plus"></i>
+            Nouvelle analyse
+          </a>
+
+          <a class="btn btn-secondary" href="{{ url_for('dashboard') }}">
+            <i class="ti ti-arrow-left"></i>
+            Retour dashboard
+          </a>
+        </div>
+      </div>
+
+      <div class="image-card">
+        <img src="{{ img }}" alt="Image analysée">
+        <p class="image-caption">
+          Image téléversée et analysée par le modèle de classification.
+        </p>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+</body>
+</html>
