@@ -44,7 +44,7 @@ def download_model():
             raise Exception("MODEL_URL environment variable is missing")
 
         print("Downloading model from Google Drive...")
-        gdown.download(model_url, MODEL_PATH, quiet=False, fuzzy=True)
+        gdown.download(model_url, MODEL_PATH, quiet=False)
 
         if not os.path.exists(MODEL_PATH):
             raise Exception("Model download failed")
