@@ -157,19 +157,18 @@ import matplotlib.gridspec as gridspec
 from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
 
-# ── 1. Récupérer les prédictions ──────────────────────────────────────────────
+
 test_data.reset()  # important : remet le générateur au début
 y_pred_proba = model.predict(test_data, verbose=1)
 y_pred = np.argmax(y_pred_proba, axis=1)
 y_true = test_data.classes
 class_names = list(test_data.class_indices.keys())
-# ── 2. Matrice de confusion ───────────────────────────────────────────────────
+
 cm = confusion_matrix(y_true, y_pred)
 cm_norm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
 
 fig, axes = plt.subplots(1, 2, figsize=(18, 7))
 
-# Matrice brute (nombres)
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
             xticklabels=class_names, yticklabels=class_names,
             ax=axes[0], linewidths=0.5)
@@ -189,18 +188,13 @@ axes[1].tick_params(axis='x', rotation=45)
 plt.tight_layout()
 plt.savefig('/content/drive/MyDrive/model/confusion_matrix.png', dpi=150, bbox_inches='tight')
 plt.show()
-# ── 3. Rapport de classification ──────────────────────────────────────────────
+
 print("\n" + "="*60)
 print("RAPPORT DE CLASSIFICATION")
 print("="*60)
 print(classification_report(y_true, y_pred, target_names=class_names))
 
-# ── 4. Courbes d'entraînement (Phase 1 + Phase 2) ────────────────────────────
-# Remplace ces valeurs par tes vraies métriques history.history[...] et history_ft.history[...]
-# Si tu as bien sauvegardé history et history_ft, utilise directement :
-# acc     = history.history['accuracy']     + history_ft.history['accuracy']
-# val_acc = history.history['val_accuracy'] + history_ft.history['val_accuracy']
-# etc.
+
 
 acc     = history.history['accuracy']     + history_ft.history['accuracy']
 val_acc = history.history['val_accuracy'] + history_ft.history['val_accuracy']
@@ -233,7 +227,7 @@ for ax, train, val, title, ylabel in zip(
 plt.tight_layout()
 plt.savefig('/content/drive/MyDrive/model/training_curves.png', dpi=150, bbox_inches='tight')
 plt.show()
-# ── 5. Accuracy par classe ────────────────────────────────────────────────────
+
 per_class_acc = cm_norm.diagonal()
 
 fig, ax = plt.subplots(figsize=(10, 5))
