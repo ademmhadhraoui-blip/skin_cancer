@@ -60,7 +60,7 @@ Le modèle peut prédire les classes suivantes :
 ![Information Page](screenshots/filling_informations.png)
 
 ### Results Page
-![Results](screenshots/result.png)
+![Results](screenshots/result_page.png)
 
 ### Table of Patients 
 ![Table of Patients](screenshots/patients_table.png)
