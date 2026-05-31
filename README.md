@@ -50,6 +50,21 @@ Le modèle peut prédire les classes suivantes :
 - Gunicorn
 - Google Drive / gdown
 
+
+## Captures d’écran
+
+### Login In Page
+![Log In Page](screenshots/login_page.png)
+
+### Informations Page 
+![Information Page](screenshots/filling_informations.png)
+
+### Results Page
+![Results](screenshots/result.png)
+
+### Table of Patients 
+![Table of Patients](screenshots/patients_table.png)
+
 ## Démo vidéo
 https://drive.google.com/file/d/1i-RjtF43E8SIkhT0PgyVs6LPujqULjST/view?usp=drive_link
 
