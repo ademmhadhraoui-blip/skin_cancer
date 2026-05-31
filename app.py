@@ -7,6 +7,10 @@ from werkzeug.utils import secure_filename
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 import gdown
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 
@@ -19,10 +23,9 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
-# ── Connexion DB (fonction pour éviter les déconnexions) ──────────────────────
+# ── Connexion DB (fonction pour éviter les déconnexions) ─────────────────────
 def get_db():
     mysql_port = os.environ.get("MYSQLPORT") or "3306"
-
     return mysql.connector.connect(
         host=os.environ.get("MYSQLHOST"),
         user=os.environ.get("MYSQLUSER"),

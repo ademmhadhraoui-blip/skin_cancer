@@ -6,3 +6,4 @@ mysql-connector-python
 Pillow
 requests
 gdown
+python-dotenv
