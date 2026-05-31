@@ -21,14 +21,15 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ── Connexion DB (fonction pour éviter les déconnexions) ──────────────────────
 def get_db():
+    mysql_port = os.environ.get("MYSQLPORT") or 3306
+
     return mysql.connector.connect(
         host=os.environ.get("MYSQLHOST", "localhost"),
         user=os.environ.get("MYSQLUSER", "root"),
         password=os.environ.get("MYSQLPASSWORD", ""),
         database=os.environ.get("MYSQLDATABASE", "skin_care_db"),
-        port=int(os.environ.get("MYSQLPORT", 3306))
+        port=int(mysql_port)
     )
-
 # ── Chargement du modèle (une seule fois au démarrage) ────────────────────────
 
 MODEL_DIR = "model"
